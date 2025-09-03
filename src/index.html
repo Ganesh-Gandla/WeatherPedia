@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather-Pedia</title>
+    <link href="./output.css" rel="stylesheet">
+</head>
+
+<body class="p-4 bg-gray-100">
+    <div class="max-w-7xl mx-auto">
+        <header class="w-full flex flex-col justify-center items-center">
+            <h1 class="text-4xl lg:text-5xl font-extrabold text-blue-600 mb-2">Weather-Pedia</h1>
+            <!-- <p class="max-w-xl text-center text-gray-600 mt-2 text-lg">More than just a forecast, Weatherpedia is your one-stop resource for all things weather. Get accurate predictions and dive deep into the fascinating science behind the sky above you.</p> -->
+        </header>
+
+        <main>
+            <!-- Search and Main Weather Section -->
+            <section class="flex flex-col lg:flex-row lg:space-x-10 space-y-8 lg:space-y-0 p-4">
+                <div class="w-full lg:w-1/2 space-y-4 ">
+                    <form>
+                        <div class="flex items-center space-x-2 w-full max-w-lg mx-auto">
+                            <input type="search" name="" id="" class="flex-grow px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Search for a city..." />
+                            <button type="submit" class="px-6 py-2 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                Search
+                            </button>
+                            <button type="submit" class="h-10 w-10 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <img src="./icons/arrows.png" alt="" class="h-6 justify-self-center">
+                            </button>
+                        </div>
+                    </form>
+                    <div class="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center justify-center text-center">
+                        <!-- Replaced image with a large emoji for performance -->
+                        <span class="text-6xl mb-4">☁️</span>
+                        <p class="text-5xl font-bold text-gray-800">25°C</p>
+                        <p class="text-lg text-gray-600 mt-2">
+                            <span class="font-semibold">Monday,</span>
+                            <span>10:30 AM</span>
+                        </p>
+                        <p class="text-lg text-gray-600 mt-2">Cloudy</p>
+                    </div>
+                </div>
+
+                <!-- Today's Highlights Section -->
+                <div class="w-full lg:w-1/2 space-y-4">
+                    <div class="flex justify-between items-center ">
+                        <h3 class="text-2xl font-bold text-gray-800">Today's Highlights</h3>
+                        <div class="flex items-center rounded-full overflow-hidden shadow-sm">
+                            <button class="px-4 py-2 text-sm font-medium focus:outline-none transition-colors duration-200 bg-blue-600 text-white hover:bg-blue-700">
+                                C°
+                            </button>
+                            <button class="px-4 py-2 text-sm font-medium focus:outline-none transition-colors duration-200 bg-gray-200 text-gray-800 hover:bg-gray-300">
+                                F°
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Wind Status Card -->
+                        <article class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-start transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+                            <h3 class="text-sm font-semibold text-gray-500 mb-2">Wind Status</h3>
+                            <p class="text-4xl font-bold text-gray-800">7.70 <span class="text-lg text-gray-500 font-normal">km/h</span></p>
+                        </article>
+
+                        <!-- Sunrise & Sunset Card -->
+                        <article class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-start transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+                            <h3 class="text-sm font-semibold text-gray-500 mb-2">Sunrise & Sunset</h3>
+                            <p class="text-2xl font-bold text-gray-800">6:00 <span class="text-base text-gray-500 font-normal">AM</span></p>
+                            <p class="text-2xl font-bold text-gray-800">6:00 <span class="text-base text-gray-500 font-normal">PM</span></p>
+                        </article>
+
+                        <!-- Humidity Card -->
+                        <article class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-start transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+                            <h3 class="text-sm font-semibold text-gray-500 mb-2">Humidity</h3>
+                            <p class="text-4xl font-bold text-gray-800">12<span class="text-lg text-gray-500 font-normal">%</span></p>
+                        </article>
+
+                        <!-- Visibility Card -->
+                        <article class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-start transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+                            <h3 class="text-sm font-semibold text-gray-500 mb-2">Visibility</h3>
+                            <p class="text-4xl font-bold text-gray-800">10 <span class="text-lg text-gray-500 font-normal">km</span></p>
+                        </article>
+
+                        <!-- Air Quality Card -->
+                        <article class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-start transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+                            <h3 class="text-sm font-semibold text-gray-500 mb-2">Air Quality</h3>
+                            <p class="text-4xl font-bold text-gray-800">Good</p>
+                        </article>
+
+                        <!-- UV Index Card -->
+                        <article class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-start transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+                            <h3 class="text-sm font-semibold text-gray-500 mb-2">UV Index</h3>
+                            <p class="text-4xl font-bold text-gray-800">3 <span class="text-lg text-gray-500 font-normal">of 10</span></p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Past 5 Days Section -->
+            <section class="p-4 space-y-4">
+                <h3 class="text-2xl font-bold text-gray-800">Past 5 Days</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    <!-- Cards for past 5 days, all with emojis -->
+                    <article class="bg-white rounded-xl shadow-lg p-4 flex flex-col items-center justify-center text-center transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+                        <h3 class="text-sm font-semibold text-gray-500 mb-2">Tuesday</h3>
+                        <span class="text-4xl mb-2">🌤️</span>
+                        <div class="flex items-center space-x-2 text-lg">
+                            <span class="font-bold text-gray-800">28°</span>
+                            <span class="text-gray-400">18°</span>
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-xl shadow-lg p-4 flex flex-col items-center justify-center text-center transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+                        <h3 class="text-sm font-semibold text-gray-500 mb-2">Monday</h3>
+                        <span class="text-4xl mb-2">🌧️</span>
+                        <div class="flex items-center space-x-2 text-lg">
+                            <span class="font-bold text-gray-800">22°</span>
+                            <span class="text-gray-400">15°</span>
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-xl shadow-lg p-4 flex flex-col items-center justify-center text-center transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+                        <h3 class="text-sm font-semibold text-gray-500 mb-2">Sunday</h3>
+                        <span class="text-4xl mb-2">☁️</span>
+                        <div class="flex items-center space-x-2 text-lg">
+                            <span class="font-bold text-gray-800">25°</span>
+                            <span class="text-gray-400">17°</span>
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-xl shadow-lg p-4 flex flex-col items-center justify-center text-center transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+                        <h3 class="text-sm font-semibold text-gray-500 mb-2">Saturday</h3>
+                        <span class="text-4xl mb-2">☀️</span>
+                        <div class="flex items-center space-x-2 text-lg">
+                            <span class="font-bold text-gray-800">30°</span>
+                            <span class="text-gray-400">20°</span>
+                        </div>
+                    </article>
+                    <article class="bg-white rounded-xl shadow-lg p-4 flex flex-col items-center justify-center text-center transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+                        <h3 class="text-sm font-semibold text-gray-500 mb-2">Friday</h3>
+                        <span class="text-4xl mb-2">⛈️</span>
+                        <div class="flex items-center space-x-2 text-lg">
+                            <span class="font-bold text-gray-800">24°</span>
+                            <span class="text-gray-400">16°</span>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+<!-- npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch -->
+
+</html>
