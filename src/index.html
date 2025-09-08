@@ -19,9 +19,8 @@
             <!-- Search and Main Weather Section -->
             <section class="flex flex-col lg:flex-row lg:space-x-10 space-y-8 lg:space-y-0 p-4">
                 <div class="w-full lg:w-1/2 space-y-4 ">
-                    <!-- <form> -->
                         <div class="flex items-center space-x-2 w-full max-w-lg mx-auto">
-                            <input type="search" name="" id="search-bar" class="flex-grow px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="enter city..." />
+                            <input type="search" name="search" id="search-bar" class="flex-grow px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="enter city..." />
                             <button type="button" id="search-button" class="h-10 w-10 rounded-full bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <img src="./icons/search.png" alt="" class="h-6 w-6 justify-self-center">
                             </button>
@@ -29,12 +28,11 @@
                                 <img src="./icons/arrows.png" alt="" class="h-6 w-6 justify-self-center">
                             </button>
                         </div>
-                    <!-- </form> -->
                     <div class="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center justify-center text-center">
                         <!-- Replaced image with a large emoji for performance -->
                         <p id="cityName" class="text-lg text-gray-600 mt-2">-</p>
-                        <span id='weather-icon' class="text-6xl mb-4">☁️</span>
-                        <p  class="text-5xl font-bold text-gray-800"><span id="temperature">-</span><span>°C</span></p>
+                        <img src="./icons/arrows.png" alt="" id='weather-icon' class="h-28 w-28 justify-self-center">
+                        <p  class="text-5xl font-bold text-gray-800"><span id="temperature">-</span><span id="tempUnits">°C</span></p>
                         <p id="" class="text-lg text-gray-600 mt-2">
                             <span id="current-day" class="font-semibold">Monday,</span>
                             <span id="current-time">10:30 AM</span>
@@ -101,14 +99,21 @@
             <!-- Past 5 Days Section -->
             <section class="p-4 space-y-4">
                 <h3 class="text-2xl font-bold text-gray-800">Past 5 Days</h3>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div id="forecast-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     <!-- Cards for past 5 days, all with emojis -->
-                    <article class="bg-white rounded-xl shadow-lg p-4 flex flex-col items-center justify-center text-center transition-transform duration-300 ease-in-out hover:scale-[1.02]">
-                        <h3 class="text-sm font-semibold text-gray-500 mb-2">Tuesday</h3>
-                        <span class="text-4xl mb-2">🌤️</span>
+                    <!-- <article class="bg-white rounded-xl shadow-lg p-4 flex flex-col items-center justify-center text-center transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+                        <h3 id='date-day-1' class="text-sm font-semibold text-gray-500 mb-2">day1</h3>
+                        <span id="WI-day-1" class="text-4xl mb-2">🌤️</span>
                         <div class="flex items-center space-x-2 text-lg">
-                            <span class="font-bold text-gray-800">28°</span>
-                            <span class="text-gray-400">18°</span>
+                            <span id="max-day-1" class="font-bold text-gray-800">28°</span>
+                            <span id="min-day-1" class="text-gray-400">18°</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-sm">
+                            <img src="./icons/humidity.png" alt="" class="h-4 w-4">
+                            <span id="humidity-day-1" class="font-bold text-gray-800">-</span>
+                            <img src="./icons/windy.png" alt="" class="h-4 w-4">
+                            <span id="wind-day-1" class="font-bold text-gray-800">-</span>
+                            
                         </div>
                     </article>
                     <article class="bg-white rounded-xl shadow-lg p-4 flex flex-col items-center justify-center text-center transition-transform duration-300 ease-in-out hover:scale-[1.02]">
@@ -142,7 +147,7 @@
                             <span class="font-bold text-gray-800">24°</span>
                             <span class="text-gray-400">16°</span>
                         </div>
-                    </article>
+                    </article> -->
                 </div>
             </section>
         </main>
