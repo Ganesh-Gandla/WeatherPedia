@@ -3,6 +3,7 @@ const searchBar = document.querySelector("#search-bar");
 const searchButton = document.querySelector("#search-button");
 const locationButton = document.querySelector('#location-button');
 const validationMessage = document.querySelector('#validation-message');
+const apiError = document.getElementById('api-error');
 const cityName = document.querySelector('#cityName');
 const weatherIcon = document.querySelector('#weather-icon');
 const currentTemp = document.querySelector('#temperature');
@@ -124,7 +125,11 @@ async function handleLocationSearch() {
 
 // ----------------- Main Weather Logic -----------------
 async function searchCity(city) {
-  await fetchWeather(city);
+  try {
+    await fetchWeather(city);
+  } catch {
+    return; // Stop processing if weather fetch fails
+  }
 
   const { date, time, sunrise, sunset } = getWeatherTimes(formatedData);
   cityName.textContent = formatedData.name;
@@ -142,20 +147,55 @@ async function searchCity(city) {
   humidityLevel.textContent = formatedData.main.humidity;
   visibilityDistance.textContent = (formatedData.visibility / 1000).toFixed(1);
 
-  renderForecast();
+  renderForecast(); // will fetch forecast next
 }
+
 
 // ----------------- API Calls -----------------
 async function fetchWeather(city) {
-  const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=107e46fc26949b76b90f98c326fa4a26&units=metric`);
-  formatedData = await res.json();
+  const apiKey = '107e46fc26949b76b90f98c326fa4a26';
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+  try {
+    const res = await fetch(url);
+    
+    if (!res.ok) {
+      if (res.status === 404) {
+        throw new Error(`City "${city}" not found.`);
+      } else if (res.status === 429) {
+        throw new Error("Too many requests. Please try again later.");
+      } else {
+        throw new Error("Unable to fetch weather data.");
+      }
+    }
+
+    formatedData = await res.json();
+    hideApiError(); // ✅ clear any past error
+  } catch (error) {
+    console.error(error);
+    showApiError(error.message);
+    throw error; // ✅ rethrow so caller knows it failed
+  }
 }
 
+
 async function fetchForecastData(lat, lon) {
-  const res = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=c0e8fa7277f461fb485dd5a1ad2e27ba`);
-  const forecast = await res.json();
-  ForecastArr = [8, 16, 24, 32, 39].map(i => forecast.list[i]);
+  const apiKey = 'c0e8fa7277f461fb485dd5a1ad2e27ba';
+  const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Forecast fetch failed.");
+    const forecast = await res.json();
+    ForecastArr = [8, 16, 24, 32, 39].map(i => forecast.list[i]);
+    hideApiError();
+  } catch (err) {
+    console.error(err);
+    showApiError("Could not load forecast data.");
+    ForecastArr = [];
+  }
 }
+
 
 // ----------------- Forecast UI -----------------
 async function renderForecast() {
@@ -301,4 +341,14 @@ function showValidationMessage(message) {
 function hideValidationMessage() {
   validationMessage.textContent = '';
   validationMessage.classList.add('hidden');
+}
+
+function showApiError(message) {
+  apiError.textContent = message;
+  apiError.classList.remove('hidden');
+}
+
+function hideApiError() {
+  apiError.textContent = '';
+  apiError.classList.add('hidden');
 }
