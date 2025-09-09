@@ -1,220 +1,217 @@
-const searchBar = document.querySelector("#search-bar")
-const searchButton = document.querySelector("#search-button")
+// ----------------- DOM Elements -----------------
+const searchBar = document.querySelector("#search-bar");
+const searchButton = document.querySelector("#search-button");
+const cityName = document.querySelector('#cityName');
+const weatherIcon = document.querySelector('#weather-icon');
+const currentTemp = document.querySelector('#temperature');
+const tempUnits = document.querySelector('#tempUnits');
+const currentDay = document.querySelector('#current-day');
+const currentTime = document.querySelector('#current-time');
+const weatherDescription = document.querySelector('#weather-description');
 
-const cityName = document.querySelector('#cityName')
-const weatherIcon = document.querySelector('#weather-icon')
-const currentTemp = document.querySelector('#temperature')
-const tempUnits = document.querySelector('#tempUnits')
-const currentDay = document.querySelector('#current-day')
-const currentTime = document.querySelector('#current-time')
-const weatherDescription = document.querySelector('#weather-description')
+const toggleC = document.querySelector('#toggle-c');
+const toggleF = document.querySelector('#toggle-f');
 
-const toggleC = document.querySelector('#toggle-c')
-const toggleF = document.querySelector('#toggle-f')
+const windSpeed = document.querySelector('#wind-speed');
+const sunriseTime = document.querySelector('#sunrise');
+const sunsetTime = document.querySelector('#sunset');
+const humidityLevel = document.querySelector('#humidity');
+const visibilityDistance = document.querySelector('#visibility');
 
-const windSpeed = document.querySelector('#wind-speed')
-const sunriseTime = document.querySelector('#sunrise')
-const sunsetTime = document.querySelector('#sunset')
-const humidityLevel = document.querySelector('#humidity')
-const visibilityDistance = document.querySelector('#visibility')
-const airQuality = document.querySelector('#air-quality')
-const uvIndex = document.querySelector('#uv-index')
+const forecastContainer = document.querySelector('#forecast-container');
+const recentList = document.getElementById('recent-searches');
 
-let formatedData = {}
-let TempInC = true
+// ----------------- State -----------------
+let formatedData = {};
+let TempInC = true;
+let ForecastArr = [];
 
-searchButton.addEventListener("click", handleClick)
-toggleC.addEventListener("click",HandleToggleC)
-toggleF.addEventListener("click",HandleToggleF)
+const MAX_RECENTS = 5;
+const STORAGE_KEY = 'recentSearches';
 
+// ----------------- Event Listeners -----------------
+searchButton.addEventListener("click", handleClick);
+toggleC.addEventListener("click", handleToggleC);
+toggleF.addEventListener("click", handleToggleF);
+searchBar.addEventListener('focus', renderDropdown);
+searchBar.addEventListener('blur', () => {
+  setTimeout(() => recentList.classList.add('hidden'), 150);
+});
+
+// Event: Hide dropdown on document click (outside input/dropdown)
+document.addEventListener('click', (e) => {
+  if (
+    !searchBar.contains(e.target) &&
+    !recentList.contains(e.target)
+  ) {
+    recentList.classList.add('hidden');
+  }
+});
+
+// ----------------- Handlers -----------------
 function handleClick() {
-  console.log("clicked")
-  console.log(searchBar.value)
-  searchCity(searchBar.value)
+  const city = searchBar.value.trim();
+  if (!city) return;
+  saveSearch(city);
+  renderDropdown();
+  searchCity(city);
+  recentList.classList.add('hidden');
 }
 
-async function fetchdata({city}) {
-  console.log("fetching...")
-  console.log(city)
-  let requestedData = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=107e46fc26949b76b90f98c326fa4a26&units=metric`)
-  formatedData = await requestedData.json();
-  console.log(formatedData)
+function handleToggleC() {
+  TempInC = true;
+  tempUnits.textContent = "°C";
+  toggleC.className = activeToggleClass();
+  toggleF.className = inactiveToggleClass();
+  currentTemp.textContent = formatedData.main.temp;
 }
 
-// const formatedData = {
-//   "coord": {
-//     "lon": 83.2093,
-//     "lat": 17.69
-//   },
-//   "weather": [
-//     {
-//       "id": 804,
-//       "main": "Clouds",
-//       "description": "overcast clouds",
-//       "icon": "04d"
-//     }
-//   ],
-//   "base": "stations",
-//   "main": {
-//     "temp": 28.91,
-//     "feels_like": 31.83,
-//     "temp_min": 28.91,
-//     "temp_max": 28.91,
-//     "pressure": 1001,
-//     "humidity": 66,
-//     "sea_level": 1001,
-//     "grnd_level": 995
-//   },
-//   "visibility": 10000,
-//   "wind": {
-//     "speed": 6.65,
-//     "deg": 211,
-//     "gust": 8.83
-//   },
-//   "clouds": {
-//     "all": 96
-//   },
-//   "dt": 1756985325,
-//   "sys": {
-//     "country": "IN",
-//     "sunrise": 1756944823,
-//     "sunset": 1756989554
-//   },
-//   "timezone": 19800,
-//   "id": 1253102,
-//   "name": "Visakhapatnam",
-//   "cod": 200
-// }
+function handleToggleF() {
+  TempInC = false;
+  tempUnits.textContent = "°F";
+  toggleF.className = activeToggleClass();
+  toggleC.className = inactiveToggleClass();
+  currentTemp.textContent = convertToF(formatedData.main.temp);
+}
 
-
-
-
-
-let ForecastArr = []
-let container = document.querySelector('#forecast-container')
-
-
-
-
+// ----------------- Main Weather Logic -----------------
 async function searchCity(city) {
-  
-  await fetchdata({city})
-  const localDetails = getWeatherTimes(formatedData);
-  cityName.innerHTML = formatedData.name
-  weatherIcon.setAttribute("src", `https://openweathermap.org/img/wn/${formatedData.weather[0].icon}@2x.png`);
-  console.log(TempInC)
-  currentTemp.innerHTML = (TempInC == true)?formatedData.main.temp:((formatedData.main.temp*(9/5))+32).toFixed(2);
-  currentDay.innerHTML = localDetails.date
-  currentTime.innerHTML = localDetails.time
-  weatherDescription.innerHTML = formatedData.weather[0].description
-  windSpeed.innerHTML = formatedData.wind.speed
-  sunriseTime.innerHTML = localDetails.sunrise
-  sunsetTime.innerHTML = localDetails.sunset
-  humidityLevel.innerHTML = formatedData.main.humidity
-  visibilityDistance.innerHTML = formatedData.visibility / 1000
-  getcards();
+  await fetchWeather(city);
+
+  const { date, time, sunrise, sunset } = getWeatherTimes(formatedData);
+  cityName.textContent = formatedData.name;
+  weatherIcon.src = `https://openweathermap.org/img/wn/${formatedData.weather[0].icon}@2x.png`;
+  currentTemp.textContent = TempInC
+    ? formatedData.main.temp
+    : convertToF(formatedData.main.temp);
+
+  currentDay.textContent = date;
+  currentTime.textContent = time;
+  weatherDescription.textContent = formatedData.weather[0].description;
+  windSpeed.textContent = formatedData.wind.speed;
+  sunriseTime.textContent = sunrise;
+  sunsetTime.textContent = sunset;
+  humidityLevel.textContent = formatedData.main.humidity;
+  visibilityDistance.textContent = (formatedData.visibility / 1000).toFixed(1);
+
+  renderForecast();
 }
 
-
-
-// searchButton.addEventListener('click',fetchdata);
-
+// ----------------- API Calls -----------------
+async function fetchWeather(city) {
+  const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=107e46fc26949b76b90f98c326fa4a26&units=metric`);
+  formatedData = await res.json();
+}
 
 async function fetchForecastData(lat, lon) {
-  let forecastData = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=c0e8fa7277f461fb485dd5a1ad2e27ba`)
-  let formatedForecastData = await forecastData.json();
-  ForecastArr = [formatedForecastData.list[8],
-  formatedForecastData.list[16],
-  formatedForecastData.list[24],
-  formatedForecastData.list[32],
-  formatedForecastData.list[39]
-  ]
-  console.log(ForecastArr)
+  const res = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=c0e8fa7277f461fb485dd5a1ad2e27ba`);
+  const forecast = await res.json();
+  ForecastArr = [8, 16, 24, 32, 39].map(i => forecast.list[i]);
 }
 
-
-async function getcards() {
+// ----------------- Forecast UI -----------------
+async function renderForecast() {
   await fetchForecastData(formatedData.coord.lat, formatedData.coord.lon);
-  ForecastArr.forEach((item) => {
-    let artical = document.createElement("div")
-    artical.innerHTML = `<article class="bg-white rounded-xl shadow-lg p-4 flex flex-col items-center justify-center text-center transition-transform duration-300 ease-in-out hover:scale-[1.02]">
-                        <h3 id='date-day-1' class="text-sm font-semibold text-gray-500 mb-2">${item.dt_txt.split(' ')[0]}</h3>
-                        <img src="https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png" alt="" class="h-20 w-20">
-                        <div class="flex items-center space-x-2 text-lg">
-                            <span id="max-day-1" class="font-bold text-gray-800">${(item.main.temp_max - 273.15).toFixed(1)}</span>
-                            <span id="min-day-1" class="text-gray-400">${(item.main.temp_min - 273.15).toFixed(1)}</span>
-                        </div>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <img src="./icons/humidity.png" alt="" class="h-4 w-4">
-                            <span id="humidity-day-1" class="font-bold text-gray-800">${item.main.humidity}</span>
-                            <img src="./icons/windy.png" alt="" class="h-4 w-4">
-                            <span id="wind-day-1" class="font-bold text-gray-800">${item.wind.speed}</span>
-                            
-                        </div>
-                    </article>`
-    container.appendChild(artical);
+  forecastContainer.innerHTML = ''; // clear previous
+
+  ForecastArr.forEach(item => {
+    const article = document.createElement("div");
+    article.innerHTML = `
+      <article class="bg-white rounded-xl shadow-lg p-4 flex flex-col items-center justify-center text-center transition-transform duration-300 ease-in-out hover:scale-[1.02]">
+        <h3 class="text-sm font-semibold text-gray-500 mb-2">${item.dt_txt.split(' ')[0]}</h3>
+        <img src="https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png" alt="" class="h-20 w-20">
+        <div class="flex items-center space-x-2 text-lg">
+          <span class="font-bold text-gray-800">${kelvinToC(item.main.temp_max)}</span>
+          <span class="text-gray-400">${kelvinToC(item.main.temp_min)}</span>
+        </div>
+        <div class="flex items-center space-x-2 text-sm">
+          <img src="./icons/humidity.png" alt="" class="h-4 w-4">
+          <span class="font-bold text-gray-800">${item.main.humidity}</span>
+          <img src="./icons/windy.png" alt="" class="h-4 w-4">
+          <span class="font-bold text-gray-800">${item.wind.speed}</span>
+        </div>
+      </article>`;
+    forecastContainer.appendChild(article);
   });
 }
 
-// date and time
-
+// ----------------- Date & Time Formatting -----------------
 function getWeatherTimes(data) {
+  const formatTime = (ts) => new Date(ts * 1000).toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
 
-  // Function to format a timestamp into a readable time string (e.g., "05:45 PM")
-  const formatTime = (timestamp) => {
-    // Add the timezone offset to the UTC timestamp
-    const localTime = new Date((timestamp) * 1000);
-    const timeString = localTime.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    });
-    return timeString
-  };
-
-  // Get the current date and time
-  const currentDate = new Date(data.dt * 1000);
-
-  const formattedDate = currentDate.toLocaleDateString('en-US', {
+  const date = new Date(data.dt * 1000).toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
   });
 
-  const formattedTime = formatTime(data.dt);
-
-  // Get the formatted sunrise and sunset times
-  const formattedSunrise = formatTime(data.sys.sunrise);
-  const formattedSunset = formatTime(data.sys.sunset);
-
   return {
-    date: formattedDate,
-    time: formattedTime,
-    sunrise: formattedSunrise.replace(/( AM| PM)/, ''),
-    sunset: formattedSunset.replace(/( AM| PM)/, ''),
+    date,
+    time: formatTime(data.dt),
+    sunrise: formatTime(data.sys.sunrise).replace(/( AM| PM)/, ''),
+    sunset: formatTime(data.sys.sunset).replace(/( AM| PM)/, ''),
   };
 }
 
-function HandleToggleC(){
-  console.log("data in C")
-  TempInC = true
-  tempUnits.innerHTML = "°C"
-  toggleC.setAttribute("class","px-4 py-2 text-sm font-medium focus:outline-none transition-colors duration-200 bg-blue-600 text-white hover:bg-blue-700")
-  toggleF.setAttribute("class","px-4 py-2 text-sm font-medium focus:outline-none transition-colors duration-200 bg-gray-200 text-gray-800 hover:bg-gray-300")
-  currentTemp.innerHTML = formatedData.main.temp
+// ----------------- Recent Searches -----------------
+function getRecentSearches() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 }
 
-function HandleToggleF(){
-  console.log("data in F")
-  TempInC = false
-  tempUnits.innerHTML = "°F"
-  toggleF.setAttribute("class","px-4 py-2 text-sm font-medium focus:outline-none transition-colors duration-200 bg-blue-600 text-white hover:bg-blue-700")
-  toggleC.setAttribute("class","px-4 py-2 text-sm font-medium focus:outline-none transition-colors duration-200 bg-gray-200 text-gray-800 hover:bg-gray-300")
-  currentTemp.innerHTML = ((formatedData.main.temp*(9/5))+32).toFixed(2)
+function saveSearch(term) {
+  if (!term.trim()) return;
+  let recents = getRecentSearches().filter(t => t.toLowerCase() !== term.toLowerCase());
+  recents.unshift(term);
+  if (recents.length > MAX_RECENTS) recents.pop();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(recents));
 }
 
+function renderDropdown() {
+  const recents = getRecentSearches();
+  recentList.innerHTML = '';
 
+  if (recents.length === 0) {
+    recentList.classList.add('hidden');
+    return;
+  }
 
+  recents.forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = item;
+    li.className = 'px-4 py-2 hover:bg-blue-100 cursor-pointer text-gray-700';
+    
+    // ✅ Handle dropdown click: set value, hide dropdown, search
+    li.addEventListener('mousedown', (e) => {
+      e.preventDefault(); // Prevent blur before click registers
+      searchBar.value = item;
+      recentList.classList.add('hidden');
+      handleClick(); // 🔍 Trigger search
+      recentList.classList.add('hidden');
+    });
 
+    recentList.appendChild(li);
+  });
 
+  recentList.classList.remove('hidden');
+}
 
+// ----------------- Utilities -----------------
+function kelvinToC(k) {
+  return (k - 273.15).toFixed(1);
+}
+
+function convertToF(c) {
+  return ((c * 9/5) + 32).toFixed(2);
+}
+
+function activeToggleClass() {
+  return "px-4 py-2 text-sm font-medium focus:outline-none transition-colors duration-200 bg-blue-600 text-white hover:bg-blue-700";
+}
+
+function inactiveToggleClass() {
+  return "px-4 py-2 text-sm font-medium focus:outline-none transition-colors duration-200 bg-gray-200 text-gray-800 hover:bg-gray-300";
+}
