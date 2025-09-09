@@ -1,6 +1,7 @@
 // ----------------- DOM Elements -----------------
 const searchBar = document.querySelector("#search-bar");
 const searchButton = document.querySelector("#search-button");
+const locationButton = document.querySelector('#location-button');
 const cityName = document.querySelector('#cityName');
 const weatherIcon = document.querySelector('#weather-icon');
 const currentTemp = document.querySelector('#temperature');
@@ -21,6 +22,9 @@ const visibilityDistance = document.querySelector('#visibility');
 const forecastContainer = document.querySelector('#forecast-container');
 const recentList = document.getElementById('recent-searches');
 
+
+
+
 // ----------------- State -----------------
 let formatedData = {};
 let TempInC = true;
@@ -31,6 +35,7 @@ const STORAGE_KEY = 'recentSearches';
 
 // ----------------- Event Listeners -----------------
 searchButton.addEventListener("click", handleClick);
+locationButton.addEventListener('click', handleLocationSearch);
 toggleC.addEventListener("click", handleToggleC);
 toggleF.addEventListener("click", handleToggleF);
 searchBar.addEventListener('focus', renderDropdown);
@@ -51,7 +56,7 @@ document.addEventListener('click', (e) => {
 // ----------------- Handlers -----------------
 function handleClick() {
   const city = searchBar.value.trim();
-  if (!city) return;
+  if (!city) alert("Please enter valid city name");
   saveSearch(city);
   renderDropdown();
   searchCity(city);
@@ -73,6 +78,36 @@ function handleToggleF() {
   toggleC.className = inactiveToggleClass();
   currentTemp.textContent = convertToF(formatedData.main.temp);
 }
+
+async function handleLocationSearch() {
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by your browser.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    const { latitude, longitude } = position.coords;
+
+    try {
+      const city = await getCityFromCoordinates(latitude, longitude);
+      if (city) {
+        searchBar.value = city; // Optional: set input field
+        saveSearch(city);       // Optional: store in recents
+        searchCity(city);       // ✅ Use your existing logic
+      } else {
+        alert("Could not determine city from your location.");
+      }
+    } catch (err) {
+      alert("Error getting city name.");
+      console.error(err);
+    }
+
+  }, (error) => {
+    alert("Unable to retrieve your location.");
+    console.error(error);
+  });
+}
+
 
 // ----------------- Main Weather Logic -----------------
 async function searchCity(city) {
@@ -198,6 +233,22 @@ function renderDropdown() {
 
   recentList.classList.remove('hidden');
 }
+
+
+// search city name with coordinates 
+async function getCityFromCoordinates(lat, lon) {
+  const apiKey = '107e46fc26949b76b90f98c326fa4a26';
+  const res = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apiKey}`);
+  const data = await res.json();
+
+  // Defensive check
+  if (data && data.length > 0) {
+    return data[0].name; // Return the city name
+  }
+
+  return null;
+}
+
 
 // ----------------- Utilities -----------------
 function kelvinToC(k) {
