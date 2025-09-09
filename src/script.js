@@ -2,6 +2,7 @@
 const searchBar = document.querySelector("#search-bar");
 const searchButton = document.querySelector("#search-button");
 const locationButton = document.querySelector('#location-button');
+const validationMessage = document.querySelector('#validation-message');
 const cityName = document.querySelector('#cityName');
 const weatherIcon = document.querySelector('#weather-icon');
 const currentTemp = document.querySelector('#temperature');
@@ -43,6 +44,10 @@ searchBar.addEventListener('blur', () => {
   setTimeout(() => recentList.classList.add('hidden'), 150);
 });
 
+searchBar.addEventListener('input', () => {
+  hideValidationMessage();
+});
+
 // Event: Hide dropdown on document click (outside input/dropdown)
 document.addEventListener('click', (e) => {
   if (
@@ -56,12 +61,20 @@ document.addEventListener('click', (e) => {
 // ----------------- Handlers -----------------
 function handleClick() {
   const city = searchBar.value.trim();
-  if (!city) alert("Please enter valid city name");
+  const validation = validateCityInput(city);
+
+  if (!validation.valid) {
+    showValidationMessage(validation.message);
+    return;
+  }
+
+  hideValidationMessage(); // Clear message on valid input
   saveSearch(city);
   renderDropdown();
   searchCity(city);
   recentList.classList.add('hidden');
 }
+
 
 function handleToggleC() {
   TempInC = true;
@@ -249,6 +262,19 @@ async function getCityFromCoordinates(lat, lon) {
   return null;
 }
 
+// Input validation 
+
+function validateCityInput(input) {
+  const trimmed = input.trim();
+
+  if (!trimmed) return { valid: false, message: "City name cannot be empty." };
+  if (trimmed.length < 2) return { valid: false, message: "City name is too short." };
+  if (/^\d+$/.test(trimmed)) return { valid: false, message: "City name cannot be numbers only." };
+  if (!/^[a-zA-Z\s\-]+$/.test(trimmed)) return { valid: false, message: "Only letters, spaces, and hyphens are allowed." };
+
+  return { valid: true, message: "" };
+}
+
 
 // ----------------- Utilities -----------------
 function kelvinToC(k) {
@@ -265,4 +291,14 @@ function activeToggleClass() {
 
 function inactiveToggleClass() {
   return "px-4 py-2 text-sm font-medium focus:outline-none transition-colors duration-200 bg-gray-200 text-gray-800 hover:bg-gray-300";
+}
+
+function showValidationMessage(message) {
+  validationMessage.textContent = message;
+  validationMessage.classList.remove('hidden');
+}
+
+function hideValidationMessage() {
+  validationMessage.textContent = '';
+  validationMessage.classList.add('hidden');
 }
