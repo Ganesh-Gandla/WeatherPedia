@@ -137,7 +137,9 @@ async function searchCity(city) {
   currentTemp.textContent = TempInC
     ? formatedData.main.temp
     : convertToF(formatedData.main.temp);
-
+  if(formatedData.main.temp > 40){
+    alert("The temperature is too high")
+  }
   currentDay.textContent = date;
   currentTime.textContent = time;
   weatherDescription.textContent = formatedData.weather[0].description;
@@ -146,7 +148,7 @@ async function searchCity(city) {
   sunsetTime.textContent = sunset;
   humidityLevel.textContent = formatedData.main.humidity;
   visibilityDistance.textContent = (formatedData.visibility / 1000).toFixed(1);
-
+updateBackground(formatedData.weather[0].main);
   renderForecast(); // will fetch forecast next
 }
 
@@ -314,6 +316,29 @@ function validateCityInput(input) {
 
   return { valid: true, message: "" };
 }
+
+// dyanamic background images
+
+function updateBackground(weatherMain) {
+  const background = document.getElementById('background');
+  const backgrounds = {
+    Clear: './bg/clear.jpg',
+    Clouds: './bg/clouds.jpg',
+    Rain: './bg/rain.jpg',
+    Drizzle: './bg/rain.jpg',
+    Thunderstorm: './bg/thunderstorm.jpg',
+    Snow: './bg/snow.jpg',
+    Mist: './bg/mist.jpg',
+    Haze: './bg/mist.jpg',
+    Fog: './bg/mist.jpg'
+  };
+
+  const imgUrl = backgrounds[weatherMain] || './bg/clear.jpg';
+  background.style.backgroundImage = `url('${imgUrl}')`;
+  background.style.backgroundSize = 'cover';
+  background.style.backgroundPosition = 'center';
+}
+
 
 
 // ----------------- Utilities -----------------
