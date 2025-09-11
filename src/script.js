@@ -40,6 +40,11 @@ searchButton.addEventListener("click", handleClick);
 locationButton.addEventListener('click', handleLocationSearch);
 toggleC.addEventListener("click", handleToggleC);
 toggleF.addEventListener("click", handleToggleF);
+searchBar.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    handleClick();
+  }
+});
 searchBar.addEventListener('focus', renderDropdown);
 searchBar.addEventListener('blur', () => {
   setTimeout(() => recentList.classList.add('hidden'), 150);
