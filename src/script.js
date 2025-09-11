@@ -49,7 +49,7 @@ searchBar.addEventListener('input', () => {
   hideValidationMessage();
 });
 
-// Event: Hide dropdown on document click (outside input/dropdown)
+// dropdown
 document.addEventListener('click', (e) => {
   if (
     !searchBar.contains(e.target) &&
@@ -69,7 +69,7 @@ function handleClick() {
     return;
   }
 
-  hideValidationMessage(); // Clear message on valid input
+  hideValidationMessage();
   saveSearch(city);
   renderDropdown();
   searchCity(city);
@@ -105,9 +105,9 @@ async function handleLocationSearch() {
     try {
       const city = await getCityFromCoordinates(latitude, longitude);
       if (city) {
-        searchBar.value = city; // Optional: set input field
-        saveSearch(city);       // Optional: store in recents
-        searchCity(city);       // ✅ Use your existing logic
+        searchBar.value = city;
+        saveSearch(city);
+        searchCity(city);      
       } else {
         alert("Could not determine city from your location.");
       }
@@ -128,7 +128,7 @@ async function searchCity(city) {
   try {
     await fetchWeather(city);
   } catch {
-    return; // Stop processing if weather fetch fails
+    return; 
   }
 
   const { date, time, sunrise, sunset } = getWeatherTimes(formatedData);
@@ -149,7 +149,7 @@ async function searchCity(city) {
   humidityLevel.textContent = formatedData.main.humidity;
   visibilityDistance.textContent = (formatedData.visibility / 1000).toFixed(1);
 updateBackground(formatedData.weather[0].main);
-  renderForecast(); // will fetch forecast next
+  renderForecast();
 }
 
 
@@ -172,11 +172,11 @@ async function fetchWeather(city) {
     }
 
     formatedData = await res.json();
-    hideApiError(); // ✅ clear any past error
+    hideApiError(); 
   } catch (error) {
     console.error(error);
     showApiError(error.message);
-    throw error; // ✅ rethrow so caller knows it failed
+    throw error;
   }
 }
 
@@ -202,7 +202,7 @@ async function fetchForecastData(lat, lon) {
 // ----------------- Forecast UI -----------------
 async function renderForecast() {
   await fetchForecastData(formatedData.coord.lat, formatedData.coord.lon);
-  forecastContainer.innerHTML = ''; // clear previous
+  forecastContainer.innerHTML = '';
 
   ForecastArr.forEach(item => {
     const article = document.createElement("div");
@@ -212,12 +212,12 @@ async function renderForecast() {
         <img src="https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png" alt="" class="h-20 w-20">
         <div class="flex items-center space-x-2 text-lg">
           <span class="font-bold text-gray-800">${kelvinToC(item.main.temp_max)}</span>
-          <span class="text-gray-400">${kelvinToC(item.main.temp_min)}</span>
+          <img src="./icons/thermometer.png" alt="" class="h-5 w-5">
         </div>
         <div class="flex items-center space-x-2 text-sm">
-          <img src="./icons/humidity.png" alt="" class="h-4 w-4">
+          <img src="./icons/humidity.png" alt="" class="h-5 w-5">
           <span class="font-bold text-gray-800">${item.main.humidity}</span>
-          <img src="./icons/windy.png" alt="" class="h-4 w-4">
+          <img src="./icons/windy.png" alt="" class="h-5 w-5">
           <span class="font-bold text-gray-800">${item.wind.speed}</span>
         </div>
       </article>`;
@@ -274,12 +274,12 @@ function renderDropdown() {
     li.textContent = item;
     li.className = 'px-4 py-2 hover:bg-blue-100 cursor-pointer text-gray-700';
     
-    // ✅ Handle dropdown click: set value, hide dropdown, search
+    // Handle dropdown 
     li.addEventListener('mousedown', (e) => {
-      e.preventDefault(); // Prevent blur before click registers
+      e.preventDefault();
       searchBar.value = item;
       recentList.classList.add('hidden');
-      handleClick(); // 🔍 Trigger search
+      handleClick(); //
       recentList.classList.add('hidden');
     });
 

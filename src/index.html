@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather-Pedia</title>
+    <link rel="icon" type="image/svg+xml" href="./icons/cloud.png" />
     <link href="./output.css" rel="stylesheet">
 </head>
 
@@ -15,7 +16,6 @@
             <header class="w-full flex flex-col justify-center items-center">
                 <h1 class="text-4xl lg:text-5xl font-extrabold text-blue-600 mb-2">Weather-Pedia</h1>
                 <p id="api-error" class="mt-4 text-center text-red-600 text-sm hidden">Error fetching data.</p>
-                <!-- <p class="max-w-xl text-center text-gray-600 mt-2 text-lg">More than just a forecast, Weatherpedia is your one-stop resource for all things weather. Get accurate predictions and dive deep into the fascinating science behind the sky above you.</p> -->
             </header>
 
             <main>
@@ -50,7 +50,6 @@
 
                         <div
                             class="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center justify-center text-center">
-                            <!-- Replaced image with a large emoji for performance -->
                             <p id="cityName" class="text-lg text-gray-600 mt-2 font-extrabold">-</p>
                             <img src="./icons/arrows.png" alt="" id='weather-icon'
                                 class="h-28 w-28 justify-self-center">
@@ -84,7 +83,7 @@
                             <!-- Wind Status Card -->
                             <article
                                 class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-start transition-transform duration-300 ease-in-out hover:scale-[1.02]">
-                                <h3 class="text-sm font-semibold text-gray-500 mb-2">Wind Status</h3>
+                                <h3 class="text-sm font-semibold text-gray-500 mb-2">Wind Speed</h3>
                                 <p class="text-4xl font-bold text-gray-800"><span id="wind-speed">-</span><span
                                         class="text-lg text-gray-500 font-normal">km/h</span></p>
                             </article>
@@ -114,18 +113,6 @@
                                 <p class="text-4xl font-bold text-gray-800"><span id="visibility">-</span> <span
                                         class="text-lg text-gray-500 font-normal">km</span></p>
                             </article>
-
-                            <!-- Air Quality Card -->
-                            <!-- <article class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-start transition-transform duration-300 ease-in-out hover:scale-[1.02]">
-                            <h3 class="text-sm font-semibold text-gray-500 mb-2">Air Quality</h3>
-                            <p id="air-quality" class="text-4xl font-bold text-gray-800">Good</p>
-                        </article> -->
-
-                            <!-- UV Index Card -->
-                            <!-- <article class="bg-white rounded-xl shadow-lg p-6 flex flex-col items-start transition-transform duration-300 ease-in-out hover:scale-[1.02]">
-                            <h3 class="text-sm font-semibold text-gray-500 mb-2">UV Index</h3>
-                            <p id="uv-index" class="text-4xl font-bold text-gray-800">3 <span class="text-lg text-gray-500 font-normal">of 10</span></p>
-                        </article> -->
                         </div>
                     </div>
                 </section>
@@ -135,7 +122,7 @@
                     <h3 class="text-2xl font-bold text-gray-800">Past 5 Days</h3>
                     <div id="forecast-container"
                         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                        <!-- Cards for past 5 days, all with emojis -->
+                        <!-- Cards for past 5 days -->
                     </div>
                 </section>
             </main>
